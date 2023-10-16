@@ -1,231 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
+---
+layout: base 
+---
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - The Goonies</title>
-    <style>
-        /* Basic Reset */
-        body, h1, h2, h3, p, ul, li, a {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            text-decoration: none;
-        }
+<div class="home">
+{%- if page.title -%}
+    <h1 class="page-heading">{{ page.title }}</h1>
+{%- endif -%}
 
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            font-size: 16px;
-            line-height: 1.6;
-        }
+{{ content | markdownify }}
 
-        /* Navbar with Logo */
-        .navbar {
-            background-color: #4CAF50;
-            padding: 10px 0;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
 
-        .navbar img {
-            height: 50px;
-            margin-left: 20px;
-            border-radius: 45%;
-        }
+{% if site.paginate %}
+    {% assign rawposts = paginator.posts %}
+{% else %}
+    {% assign rawposts = site.posts %}
+{% endif %}
 
-        /* Main Content Styling */
-        main {
-            max-width: 1200px;
-            margin: 80px auto 50px;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
+<!-- Hide posts if front matter flag hide:true -->
+{% assign posts = ''|split:'' %}
+{% for post in rawposts %}
+    {% if post.hide != true %}
+    {% assign posts = posts|push:post%}
+    {% endif %}
+{% endfor %}
 
-        h1, h2, h3 {
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
+<!-- Sort posts by rank, then date -->
+{% assign grouped_posts = posts | group_by: "sticky_rank" | sort: "name", "last" %}
+{% assign sticky_posts = ''|split:'' %}
+{% assign non_sticky_posts = '' | split:'' %}
 
-        .intro {
-            text-align: center;
-            margin-bottom: 50px;
-        }
 
-        .search-box {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 50px;
-        }
+{% for gp in grouped_posts %}
+    {%- if gp.name == "" -%}
+    {% assign non_sticky_posts = gp.items | sort: "date" | reverse %}
+    {%- else %}
+    {% assign sticky_posts = sticky_posts | concat: gp.items %}
+    {%- endif -%}
+{% endfor %}
 
-        .search-box input[type="text"] {
-            padding: 10px 20px;
-            width: 80%;
-            border: none;
-            border-radius: 20px 0 0 20px;
-            outline: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+<!-- Assemble final sorted posts array -->
+{% assign sticky_posts = sticky_posts | sort: "sticky_rank", "last" %}
+{% assign posts = sticky_posts | concat: non_sticky_posts %}
 
-        .search-box button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #4CAF50;
-            color: #fff;
-            border-radius: 0 20px 20px 0;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+{%- if posts.size > 0 -%}
+    {%- if page.list_title -%}
+    <h2 class="post-list-heading">{{ page.list_title }}</h2>
+    {%- endif -%}
+    <ul class="post-list">
+    {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+    {%- for post in posts -%}
+    <li>
+        {%- if site.show_image -%}
+            {%- include post_list_image_card.html -%}
+        {% else %}
+            {%- include post_list_image_card.html -%}    
+        <!-- {%- include post_list.html -%} -->
+        {%- endif -%}
+    </li>
+    {%- endfor -%}
+    </ul>
 
-        .features {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 50px;
-        }
-
-        .feature {
-            flex: 1;
-            min-width: 250px;
-            margin: 20px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .feature:hover {
-            transform: translateY(-10px);
-        }
-
-        .feature i {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-
-        /* Loading Animation */
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        #loading p {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-
-        #loading-text {
-            animation: fadeDots 1s infinite;
-        }
-
-        @keyframes fadeDots {
-            0% { content: '.'; }
-            25% { content: '..'; }
-            50% { content: '...'; }
-            75% { content: '....'; }
-            100% { content: ''; }
-        }
-
-    </style>
-</head>
-
-<body>
-    <!-- Loading Animation -->
-    <div id="loading">
-        <p id="percent">0%</p>
-        <p id="loading-text">loading<span>.</span></p>
+    {% if site.paginate and site.posts.size > site.paginate %}
+    <div class="pager">
+        <ul class="pagination">
+        {%- if paginator.previous_page %}
+        <li><a href="{{ paginator.previous_page_path | relative_url }}" class="previous-page">{{ paginator.previous_page }}</a></li>
+        {%- else %}
+        <li><div class="pager-edge">•</div></li>
+        {%- endif %}
+        <li><div class="current-page">{{ paginator.page }}</div></li>
+        {%- if paginator.next_page %}
+        <li><a href="{{ paginator.next_page_path | relative_url }}" class="next-page">{{ paginator.next_page }}</a></li>
+        {%- else %}
+        <li><div class="pager-edge">•</div></li>
+        {%- endif %}
+        </ul>
     </div>
-    <div class="navbar">
-        <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/bcbfbeea-251d-4d2d-a40e-e147e2b9210d" alt="Cancer Research Logo">
-    </div>
-    <!-- Main Content -->
-    <main>
-        <div class="intro">
-            <h2>Welcome to Cancer Research</h2>
-            <p>Discover comprehensive information about various types of cancer, recent research, and breakthroughs.</p>
-        </div>
+    {%- endif %}
 
-        <div class="search-box">
-            <input type="text" placeholder="Search for a cancer type...">
-            <button><i class="fas fa-search"></i> Search</button>
-        </div>
+{%- endif -%}
 
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-vial"></i>
-                <h3>Research</h3>
-                <p>Explore the latest research and findings in the field of cancer.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-user-md"></i>
-                <h3>Experts</h3>
-                <p>Connect with leading experts and oncologists for insights and consultations.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-comments"></i>
-                <h3>Community</h3>
-                <p>Join discussions, share experiences, and support others in their journey.</p>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let progress = 0;
-            const percentText = document.querySelector('#percent');
-
-            function updateProgress() {
-                if (progress < 100) {
-                    if (progress < 80) {
-                        progress += 5; // Faster increment from 0-80
-                    } else {
-                        progress += 2; // Slower increment from 80-100
-                    }
-                    percentText.textContent = progress + '%';
-                    setTimeout(updateProgress, progress < 80 ? 50 : 150);
-                } else {
-                    document.getElementById('loading').style.display = 'none';
-                    document.querySelector('main').style.opacity = '1';
-                    document.querySelector('main').style.transform = 'translateY(0)';
-                    document.body.style.overflow = 'auto'; // Allow scrolling after loading
-                }
-            }
-
-            setTimeout(updateProgress, 1000); // Start the loading progress after 1 second
-        });
-    </script>
-        <script>
-            // Additional JavaScript for animations
-            const features = document.querySelectorAll('.feature');
-            features.forEach((feature, index) => {
-                feature.style.opacity = '0';
-                feature.style.transform = `translateY(${50 * (index + 1)}px)`;
-                setTimeout(() => {
-                    feature.style.opacity = '1';
-                    feature.style.transform = 'translateY(0)';
-                }, 1500 + index * 300); // Delayed appearance for each feature
-            });
-        </script>
-</body>
-
-</html>
+</div> 
