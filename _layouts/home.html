@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - The Goonies</title>
     <style>
-        /* Basic Reset */
         body, h1, h2, h3, p, ul, li, a {
             margin: 0;
             padding: 0;
@@ -22,7 +20,6 @@
             line-height: 1.6;
         }
 
-        /* Navbar with Logo */
         .navbar {
             background-color: #4CAF50;
             padding: 10px 0;
@@ -39,7 +36,6 @@
             border-radius: 45%;
         }
 
-        /* Main Content Styling */
         main {
             max-width: 1200px;
             margin: 80px auto 50px;
@@ -113,7 +109,6 @@
             color: #4CAF50;
         }
 
-        /* Loading Animation */
         #loading {
             position: fixed;
             top: 0;
@@ -150,19 +145,20 @@
 </head>
 
 <body>
-    <!-- Loading Animation -->
     <div id="loading">
         <p id="percent">0%</p>
         <p id="loading-text">loading<span>.</span></p>
     </div>
     <div class="navbar">
         <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/bcbfbeea-251d-4d2d-a40e-e147e2b9210d" alt="Cancer Research Logo">
+        
     </div>
-    <!-- Main Content -->
     <main>
         <div class="intro">
             <h2>Welcome to Cancer Research</h2>
             <p>Discover comprehensive information about various types of cancer, recent research, and breakthroughs.</p>
+            <b> Hover Over me! </b>
+            <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/c77bc3b8-6201-4a13-a915-692eca27a14a" alt="Human Body Image" style="display: block; margin: 20px auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
         </div>
 
         <div class="search-box">
@@ -196,10 +192,13 @@
 
             function updateProgress() {
                 if (progress < 100) {
-                    if (progress < 80) {
-                        progress += 5; // Faster increment from 0-80
-                    } else {
-                        progress += 2; // Slower increment from 80-100
+                    if (progress < 70) {
+                        progress += 5; 
+                    } if (80<progress<90) {
+                        progress += 2; 
+                    }
+                    else {
+                        progress +=1
                     }
                     percentText.textContent = progress + '%';
                     setTimeout(updateProgress, progress < 80 ? 50 : 150);
@@ -207,15 +206,15 @@
                     document.getElementById('loading').style.display = 'none';
                     document.querySelector('main').style.opacity = '1';
                     document.querySelector('main').style.transform = 'translateY(0)';
-                    document.body.style.overflow = 'auto'; // Allow scrolling after loading
+                    document.body.style.overflow = 'auto'; 
                 }
             }
 
-            setTimeout(updateProgress, 1000); // Start the loading progress after 1 second
+            setTimeout(updateProgress, 1000); 
         });
     </script>
         <script>
-            // Additional JavaScript for animations
+            
             const features = document.querySelectorAll('.feature');
             features.forEach((feature, index) => {
                 feature.style.opacity = '0';
@@ -223,7 +222,7 @@
                 setTimeout(() => {
                     feature.style.opacity = '1';
                     feature.style.transform = 'translateY(0)';
-                }, 1500 + index * 300); // Delayed appearance for each feature
+                }, 1500 + index * 300); 
             });
         </script>
 </body>
