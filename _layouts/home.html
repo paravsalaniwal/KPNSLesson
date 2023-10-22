@@ -140,6 +140,14 @@
             75% { content: '....'; }
             100% { content: ''; }
         }
+        .interactive-image {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .interactive-image:hover {
+            transform: scale(1.05);
+        }
 
     </style>
 </head>
@@ -165,7 +173,7 @@
             <input type="text" placeholder="Search for a cancer type...">
             <button><i class="fas fa-search"></i> Search</button>
         </div>
-
+        <a href = "Data.html"> Click me to go to data! </a>
         <div class="features">
             <div class="feature">
                 <i class="fas fa-vial"></i>
