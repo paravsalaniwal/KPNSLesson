@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Research Home</title>
     <style>
         body, h1, h2, h3, p, ul, li, a {
             margin: 0;
@@ -55,184 +56,104 @@
             margin-bottom: 50px;
         }
 
-        .search-box {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 50px;
+        .cancer-research-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .search-box input[type="text"] {
-            padding: 10px 20px;
-            width: 80%;
-            border: none;
-            border-radius: 20px 0 0 20px;
-            outline: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .cancer-research-table th,
+        .cancer-research-table td {
+            border: 1px solid #4CAF50;
+            padding: 8px;
+            text-align: left;
         }
 
-        .search-box button {
-            padding: 10px 20px;
-            border: none;
+        .cancer-research-table th {
             background-color: #4CAF50;
             color: #fff;
-            border-radius: 0 20px 20px 0;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .features {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 50px;
-        }
-
-        .feature {
-            flex: 1;
-            min-width: 250px;
-            margin: 20px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .feature:hover {
-            transform: translateY(-10px);
-        }
-
-        .feature i {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        #loading p {
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-
-        #loading-text {
-            animation: fadeDots 1s infinite;
-        }
-
-        @keyframes fadeDots {
-            0% { content: '.'; }
-            25% { content: '..'; }
-            50% { content: '...'; }
-            75% { content: '....'; }
-            100% { content: ''; }
-        }
-        .interactive-image {
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .interactive-image:hover {
-            transform: scale(1.05);
-        }
-
     </style>
 </head>
 
 <body>
-    <div id="loading">
-        <p id="percent">0%</p>
-        <p id="loading-text">loading<span>.</span></p>
-    </div>
     <div class="navbar">
         <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/bcbfbeea-251d-4d2d-a40e-e147e2b9210d" alt="Cancer Research Logo">
-        
     </div>
     <main>
         <div class="intro">
             <h2>Welcome to Cancer Research</h2>
             <p>Discover comprehensive information about various types of cancer, recent research, and breakthroughs.</p>
-            <b> Hover Over me! </b>
-            <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/c77bc3b8-6201-4a13-a915-692eca27a14a" alt="Human Body Image" style="display: block; margin: 20px auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search for a cancer type...">
-            <button><i class="fas fa-search"></i> Search</button>
-        </div>
-        <a href = "Data.html"> Click me to go to data! </a>
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-vial"></i>
-                <h3>Research</h3>
-                <p>Explore the latest research and findings in the field of cancer.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-user-md"></i>
-                <h3>Experts</h3>
-                <p>Connect with leading experts and oncologists for insights and consultations.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-comments"></i>
-                <h3>Community</h3>
-                <p>Join discussions, share experiences, and support others in their journey.</p>
-            </div>
-        </div>
+        <h2>Cancer Research Data</h2>
+        <table class="cancer-research-table" id="cancer-research-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Death Rate</th>
+                    <th>Number of People Affected</th>
+                    <th>Average Recovery Time</th>
+                    <th>Symptoms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be inserted here by the JavaScript code -->
+            </tbody>
+        </table>
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let progress = 0;
-            const percentText = document.querySelector('#percent');
+        function fetchData() {
+            const apiUrl = 'https://kpns.stu.nighthawkcodingsociety.com/api/cancers/';
 
-            function updateProgress() {
-                if (progress < 100) {
-                    if (progress < 70) {
-                        progress += 5; 
-                    } if (80<progress<90) {
-                        progress += 2; 
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                    else {
-                        progress +=1
-                    }
-                    percentText.textContent = progress + '%';
-                    setTimeout(updateProgress, progress < 80 ? 50 : 150);
-                } else {
-                    document.getElementById('loading').style.display = 'none';
-                    document.querySelector('main').style.opacity = '1';
-                    document.querySelector('main').style.transform = 'translateY(0)';
-                    document.body.style.overflow = 'auto'; 
-                }
-            }
+                    return response.json();
+                })
+                .then(data => {
+                    displayData(data);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
 
-            setTimeout(updateProgress, 1000); 
-        });
-    </script>
-        <script>
-            
-            const features = document.querySelectorAll('.feature');
-            features.forEach((feature, index) => {
-                feature.style.opacity = '0';
-                feature.style.transform = `translateY(${50 * (index + 1)}px)`;
-                setTimeout(() => {
-                    feature.style.opacity = '1';
-                    feature.style.transform = 'translateY(0)';
-                }, 1500 + index * 300); 
+        function displayData(data) {
+            const table = document.querySelector('.cancer-research-table tbody');
+
+            data.forEach(cancer => {
+                const row = document.createElement('tr');
+
+                const typeCell = document.createElement('td');
+                typeCell.textContent = cancer.type;
+                row.appendChild(typeCell);
+
+                const deathRateCell = document.createElement('td');
+                deathRateCell.textContent = cancer.deathRate;
+                row.appendChild(deathRateCell);
+
+                const numOfPeopleAffectedCell = document.createElement('td');
+                numOfPeopleAffectedCell.textContent = cancer.numOfPeopleAffected;
+                row.appendChild(numOfPeopleAffectedCell);
+
+                const avgRecoveryTimeCell = document.createElement('td');
+                avgRecoveryTimeCell.textContent = cancer.avgRecoveryTime;
+                row.appendChild(avgRecoveryTimeCell);
+
+                const symptomsCell = document.createElement('td');
+                symptomsCell.textContent = cancer.symptoms;
+                row.appendChild(symptomsCell);
+
+                table.appendChild(row);
             });
-        </script>
+        }
+
+        fetchData();
+    </script>
 </body>
 
 </html>
