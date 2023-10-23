@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Body Diagram</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        #body-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .body-part {
+            fill: #b3cde0;
+            stroke: #6497b1;
+            stroke-width: 2;
+            cursor: pointer;
+        }
+
+        .body-part:hover {
+            fill: #6497b1;
+        }
+
+        .selected {
+            fill: #005b96;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="body-diagram">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+            <rect class="body-part" id="head" x="75" y="0" width="50" height="50" rx="25" ry="25"></rect>
+            <rect class="body-part" id="body" x="50" y="50" width="100" height="150"></rect>
+            <rect class="body-part" id="left-arm" x="0" y="50" width="50" height="100"></rect>
+            <rect class="body-part" id="right-arm" x="150" y="50" width="50" height="100"></rect>
+            <rect class="body-part" id="left-leg" x="50" y="200" width="50" height="100"></rect>
+            <rect class="body-part" id="right-leg" x="100" y="200" width="50" height="100"></rect>
+        </svg>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modal-content">
+            <h2 id="cancer-type"></h2>
+            <p id="cancer-info"></p>
+            <button id="close-modal">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const bodyParts = document.querySelectorAll('.body-part');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const cancerTypeElement = document.getElementById('cancer-type');
+        const cancerInfoElement = document.getElementById('cancer-info');
+        const closeModal = document.getElementById('close-modal');
+    
+        const bodyPartToCancerType = {
+            'head': ['Brain Cancer'],
+            'left-arm': ['Skin'],
+            'right-arm': ['Skin'],
+            'left-leg': ['Colon',],
+            'right-leg': ['Colon',],
+            'body': ['Stomach', 'Breast', 'Lung', 'Kidney', 'Leukemia', 'Prostate', 'Thyroid', 'Liver', 'Pancreatic', 'Ovarian', 'Bladder', 'Small Intestine'],
+        };
+    
+        bodyParts.forEach(part => {
+            part.addEventListener('click', function() {
+                const cancerTypes = bodyPartToCancerType[this.id];
+                if (cancerTypes) {
+                    fetchData(cancerTypes);
+                }
+            });
+        });
+    
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    
+        function fetchData(cancerTypes) {
+            if (!Array.isArray(cancerTypes)) {
+                cancerTypes = [cancerTypes];
+            }
+    
+            const promises = cancerTypes.map(cancerType => {
+                const apiUrl = 'http://localhost:8023/api/cancers/byCancerType/' + cancerType;
+                return fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    });
+            });
+    
+            Promise.all(promises)
+                .then(data => {
+                    data.forEach((cancerData, index) => {
+                        displayData(cancerTypes[index], cancerData);
+                    });
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+    
+        function displayData(cancerType, data) {
+            const newModal = modal.cloneNode(true);
+            const newCancerTypeElement = newModal.querySelector('#cancer-type');
+            const newCancerInfoElement = newModal.querySelector('#cancer-info');
+            const newCloseModal = newModal.querySelector('#close-modal');
+    
+            newCancerTypeElement.textContent = cancerType;
+    
+            while (newCancerInfoElement.firstChild) {
+                newCancerInfoElement.removeChild(newCancerInfoElement.firstChild);
+            }
+    
+            data.forEach(cancer => {
+                const container = document.createElement('div');
+                container.className = 'cancer-info-container';
+    
+                const numOfPeopleAffected = document.createElement('p');
+                numOfPeopleAffected.textContent = 'Number of People Affected: ' + cancer.numOfPeopleAffected;
+                container.appendChild(numOfPeopleAffected);
+    
+                const deathRate = document.createElement('p');
+                deathRate.textContent = 'Death Rate: ' + cancer.deathRate;
+                container.appendChild(deathRate);
+    
+                const averageRecoveryTime = document.createElement('p');
+                averageRecoveryTime.textContent = 'Average Recovery Time: ' + cancer.averageRecoveryTime;
+                container.appendChild(averageRecoveryTime);
+    
+                const symptoms = document.createElement('p');
+                symptoms.textContent = 'Symptoms: ' + cancer.symptoms;
+                container.appendChild(symptoms);
+    
+                newCancerInfoElement.appendChild(container);
+            });
+    
+            newCloseModal.addEventListener('click', function() {
+                newModal.style.display = 'none';
+            });
+    
+            document.body.appendChild(newModal);
+            newModal.style.display = 'flex';
+        }
+    </script>
+    
+</body>
+</html>
