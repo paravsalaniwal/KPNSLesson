@@ -1,76 +1,213 @@
----
-layout: base
----
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+<!DOCTYPE html>
+<html lang="en">
 
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-    {%- if page.description -%}
-      {%- if site.html_escape.description -%}
-        <p class="page-description">{{ page.description | escape }}</p>
-      {%- else -%}
-        <p class="page-description">{{ page.description }}</p>
-      {%- endif -%}
-    {%- endif -%}
-    <p class="post-meta post-meta-title">
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        {{ page.date | date: date_format }}
-      </time>
-      {%- if page.modified_date -%}
-        ~ 
-        {%- assign mdate = page.modified_date | date_to_xmlschema -%}
-        <time class="dt-modified" datetime="{{ mdate }}" itemprop="dateModified">
-          {{ mdate | date: date_format }}
-        </time>
-      {%- endif -%}
-      {%- if page.author -%}
-        • {% for author in page.author %}
-          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <span class="p-author h-card" itemprop="name">{{ author }}</span></span>
-            {%- if forloop.last == false %}, {% endif -%}
-        {% endfor %}
-      {%- endif %}
-       • {% include reading_time.html -%}
-    </p>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Research Home</title>
+    <style>
+        body, h1, h2, h3, p, ul, li, a {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            text-decoration: none;
+        }
 
-    {% if page.categories.size > 0 %}
-      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
-      {% for category in  page.categories  %}
-        {%- assign prefix = category | slice: 0 -%}
-        {% if prefix == "C" %}
-          <a class="category-tags-link" href="{{site.baseurl}}/categories/cte#{{category|slugize}}">{{category}}</a>
-        {% else %}
-          <a class="category-tags-link" href="{{site.baseurl}}/categories/ap#{{category|slugize}}">{{category}}</a>
-        {% endif %}
-        {% unless forloop.last %}&nbsp;{% endunless %}
-      {% endfor %}
-      </p>
-    {% endif %}
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .navbar {
+            display: flex; /* Display the image and navigation side by side */
+            justify-content: space-between; /* Add space between the image and navigation */
+            align-items: center; /* Align vertically in the center */
+            background-color: #4CAF50;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    
+        .navbar img {
+            height: 50px;
+            margin-left: 20px;
+            border-radius: 45%;
+        }
+    
+        .navbar ul {
+            list-style: none;
+        }
+    
+        .navbar li {
+            display: inline; /* Display list items horizontally */
+            margin-right: 20px; /* Add spacing between list items */
+        }
+    
+        .navbar a {
+            color: white;
+            text-decoration: none;
+        }
 
-    {% if page.layout == 'notebook' %}
-      {% if page.badges or page.badges == nil %}
-        <div class="pb-5 d-flex flex-justify-center">
-          {% unless page.hide_github_badge or site.default_badges.github != true %}{% include notebook_github_link.html %}{% endunless %}
-          {% unless page.hide_binder_badge or site.default_badges.binder != true  %}{% include notebook_binder_link.html %}{% endunless %}
-          {% unless page.hide_colab_badge or site.default_badges.colab != true %}{% include notebook_colab_link.html %}{% endunless %}
-          {% unless page.hide_deepnote_badge or site.default_badges.deepnote != true %}{% include notebook_deepnote_link.html %}{% endunless %}
+        main {
+            max-width: 1200px;
+            margin: 80px auto 50px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .cancer-research-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .cancer-research-table th,
+        .cancer-research-table td {
+            border: 1px solid #4CAF50;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .cancer-research-table th {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/bcbfbeea-251d-4d2d-a40e-e147e2b9210d" alt="Cancer Research Logo">
+        <nav>
+            <ul>
+                <li><a href="{{site.baseurl}}/memorial">Memorial</a></li>
+                <li><a href="{{site.baseurl}}/bodydiagram">Body Diagram</a></li>
+                <li><a href="{{site.baseurl}}/data-table">Data Table</a></li>
+                <li><a href="{{site.baseurl}}/quotes">Quotes</a></li>
+            </ul>
+        </nav>
+    </div>
+    <main>
+        <div class="intro">
+            <h2>Welcome to Cancer Research</h2>
+            <p>Discover comprehensive information about various types of cancer, recent research, and breakthroughs.</p>
         </div>
-      {% endif -%}
-    {% endif -%}
-  </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
-    {%- if page.toc -%}
-      {% include toc.html html=content %}
-    {%- endif -%}
-    {{ content }}
-  </div>
-  {%- if page.comments -%}
-    {%- include utterances.html -%}
-  {%- endif -%}
-  {%- if site.disqus.shortname -%}
-    {%- include disqus_comments.html -%}
-  {%- endif -%}
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
-</article>
+        <h2>Cancer Research Data</h2>
+        <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeyup="searchTable()">
+        <table class="cancer-research-table" id="cancer-research-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Death Rate</th>
+                    <th>Number of People Affected</th>
+                    <th>Average Recovery Time</th>
+                    <th>Symptoms</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data inserted here -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        function fetchData() {
+            const apiUrl = 'http://localhost:8023/api/cancers/';
+    
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayData(data);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+    
+        function displayData(data) {
+            const table = document.querySelector('.cancer-research-table tbody');
+    
+            data.forEach(cancer => {
+                const row = document.createElement('tr');
+    
+                const typeCell = document.createElement('td');
+                typeCell.textContent = cancer.cancerType;
+                row.appendChild(typeCell);
+    
+                const deathRateCell = document.createElement('td');
+                deathRateCell.textContent = cancer.deathRate;
+                row.appendChild(deathRateCell);
+    
+                const numOfPeopleAffectedCell = document.createElement('td');
+                numOfPeopleAffectedCell.textContent = cancer.numOfPeopleAffected;
+                row.appendChild(numOfPeopleAffectedCell);
+    
+                const avgRecoveryTimeCell = document.createElement('td');
+                avgRecoveryTimeCell.textContent = cancer.averageRecoveryTime;
+                row.appendChild(avgRecoveryTimeCell);
+    
+                const symptomsCell = document.createElement('td');
+                symptomsCell.textContent = cancer.symptoms;
+                row.appendChild(symptomsCell);
+    
+                table.appendChild(row);
+            });
+        }
+    
+        function searchTable() {
+            const input = document.getElementById("search-box");
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById("cancer-research-table");
+            const tr = table.getElementsByTagName("tr");
+    
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName("td");
+                let found = false;
+                for (let j = 0; j < td.length; j++) {
+                    const textValue = td[j].textContent || td[j].innerText;
+                    if (textValue.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    
+        fetchData();
+    </script>
+    
+</body>
+
+</html>
