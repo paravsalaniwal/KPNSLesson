@@ -1,213 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ site.lang | default: "en-US" }}">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancer Research Home</title>
-    <style>
-        body, h1, h2, h3, p, ul, li, a {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            text-decoration: none;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .navbar {
-            display: flex; /* Display the image and navigation side by side */
-            justify-content: space-between; /* Add space between the image and navigation */
-            align-items: center; /* Align vertically in the center */
-            background-color: #4CAF50;
-            padding: 10px 0;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-    
-        .navbar img {
-            height: 50px;
-            margin-left: 20px;
-            border-radius: 45%;
-        }
-    
-        .navbar ul {
-            list-style: none;
-        }
-    
-        .navbar li {
-            display: inline; /* Display list items horizontally */
-            margin-right: 20px; /* Add spacing between list items */
-        }
-    
-        .navbar a {
-            color: white;
-            text-decoration: none;
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 80px auto 50px;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        h1, h2, h3 {
-            margin-bottom: 20px;
-            color: #4CAF50;
-        }
-
-        .intro {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .cancer-research-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .cancer-research-table th,
-        .cancer-research-table td {
-            border: 1px solid #4CAF50;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .cancer-research-table th {
-            background-color: #4CAF50;
-            color: #fff;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
+{%- include head.html -%}
 
 <body>
-    <div class="navbar">
-        <img src="https://github.com/Krishiv111/KPNSTeam/assets/111464993/bcbfbeea-251d-4d2d-a40e-e147e2b9210d" alt="Cancer Research Logo">
-        <nav>
-            <ul>
-                <li><a href="{{site.baseurl}}/memorial">Memorial</a></li>
-                <li><a href="{{site.baseurl}}/bodydiagram">Body Diagram</a></li>
-                <li><a href="{{site.baseurl}}/data-table">Data Table</a></li>
-                <li><a href="{{site.baseurl}}/quotes">Quotes</a></li>
-            </ul>
-        </nav>
-    </div>
-    <main>
-        <div class="intro">
-            <h2>Welcome to Cancer Research</h2>
-            <p>Discover comprehensive information about various types of cancer, recent research, and breakthroughs.</p>
-        </div>
 
-        <h2>Cancer Research Data</h2>
-        <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeyup="searchTable()">
-        <table class="cancer-research-table" id="cancer-research-table">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Death Rate</th>
-                    <th>Number of People Affected</th>
-                    <th>Average Recovery Time</th>
-                    <th>Symptoms</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data inserted here -->
-            </tbody>
-        </table>
-    </main>
+  <div class="wrapper">
+    <header>
+      {%- include header.html -%}
+    </header>
 
-    <script>
-        function fetchData() {
-            const apiUrl = 'http://localhost:8023/api/cancers/';
-    
-            fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    displayData(data);
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-        }
-    
-        function displayData(data) {
-            const table = document.querySelector('.cancer-research-table tbody');
-    
-            data.forEach(cancer => {
-                const row = document.createElement('tr');
-    
-                const typeCell = document.createElement('td');
-                typeCell.textContent = cancer.cancerType;
-                row.appendChild(typeCell);
-    
-                const deathRateCell = document.createElement('td');
-                deathRateCell.textContent = cancer.deathRate;
-                row.appendChild(deathRateCell);
-    
-                const numOfPeopleAffectedCell = document.createElement('td');
-                numOfPeopleAffectedCell.textContent = cancer.numOfPeopleAffected;
-                row.appendChild(numOfPeopleAffectedCell);
-    
-                const avgRecoveryTimeCell = document.createElement('td');
-                avgRecoveryTimeCell.textContent = cancer.averageRecoveryTime;
-                row.appendChild(avgRecoveryTimeCell);
-    
-                const symptomsCell = document.createElement('td');
-                symptomsCell.textContent = cancer.symptoms;
-                row.appendChild(symptomsCell);
-    
-                table.appendChild(row);
-            });
-        }
-    
-        function searchTable() {
-            const input = document.getElementById("search-box");
-            const filter = input.value.toLowerCase();
-            const table = document.getElementById("cancer-research-table");
-            const tr = table.getElementsByTagName("tr");
-    
-            for (let i = 1; i < tr.length; i++) {
-                const td = tr[i].getElementsByTagName("td");
-                let found = false;
-                for (let j = 0; j < td.length; j++) {
-                    const textValue = td[j].textContent || td[j].innerText;
-                    if (textValue.toLowerCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    
-        fetchData();
-    </script>
-    
+
+    <section>
+      {{ content }}
+    </section>
+
+  </div>
 </body>
+
 
 </html>
