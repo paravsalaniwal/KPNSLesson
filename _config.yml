@@ -1,15 +1,17 @@
 title: KPNSLesson
-description: "August 2023 to June 2024"
+description: "Unit 8 Lesson: 2D Arrays"
 owner_name: Tirth Thakkar
 github_username: paravsalaniwal
-github_repo: "Nighthawk-Pages"
+github_repo: "KPNSLesson"
 baseurl: "/KPNSLesson"
 remote_theme: jekyll/minima
 minima:
   social_links:
-    - { platform: github, user_url: "https://github.com/nighthawkcoders"}
-    - { platform: github, user_url: "https://github.com/Tirth-Thakkar"}
-    - { platform: github, user_url: "https://github.com/h4seeb-cmd"}
+    - { platform: github, user_url: "https://github.com/paravsalaniwal/KPNSLesson"}
+    - { platform: github, user_url: "https://github.com/Krishiv111"}
+    - { platform: github, user_url: "https://github.com/paravsalaniwal"}
+    - { platform: github, user_url: "https://github.com/nikhilc3"}
+    - { platform: github, user_url: "https://github.com/STG-7"}
 # remote_theme: pages-themes/dinky@v0.2.0
 # remote_theme: pages-themes/minimal@v0.2.0
 # remote_theme: pages-themes/hacker@v0.2.0
